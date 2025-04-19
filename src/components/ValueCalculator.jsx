@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 
 function ValueCalculator() {
   const [values, setValues] = useState(['']);
-  const [result, setResult] = useState({ sum: 0, avg: 0 });
+  const [operation, setOperation] = useState('add');
+  const [result, setResult] = useState(null);
 
   const handleValueChange = (index, newValue) => {
     const updated = [...values];
@@ -22,11 +23,37 @@ function ValueCalculator() {
   const calculate = () => {
     try {
       const numericValues = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
-      const sum = numericValues.reduce((acc, val) => acc + val, 0);
-      const avg = numericValues.length ? sum / numericValues.length : 0;
-      setResult({ sum, avg });
+      if (numericValues.length === 0) return setResult('Invalid input');
+
+      let resultValue;
+      switch (operation) {
+        case 'add':
+          resultValue = numericValues.reduce((a, b) => a + b, 0);
+          break;
+        case 'subtract':
+          resultValue = numericValues.reduce((a, b) => a - b);
+          break;
+        case 'multiply':
+          resultValue = numericValues.reduce((a, b) => a * b, 1);
+          break;
+        case 'divide':
+          resultValue = numericValues.reduce((a, b) => a / b);
+          break;
+        case 'average':
+          resultValue = numericValues.reduce((a, b) => a + b, 0) / numericValues.length;
+          break;
+        default:
+          resultValue = 'Unknown operation';
+      }
+
+      setResult({
+        value: resultValue,
+        scientific: resultValue.toExponential(3),
+        formatted: resultValue.toLocaleString(),
+        count: numericValues.length
+      });
     } catch {
-      setResult({ sum: 0, avg: 0 });
+      setResult('Error');
     }
   };
 
@@ -112,6 +139,30 @@ function ValueCalculator() {
         ➕ Add Value
       </button>
 
+      <div style={{ marginBottom: '1rem' }}>
+        <label htmlFor="operation" style={{ fontWeight: 'bold' }}>Select Operation:</label>
+        <select
+          id="operation"
+          value={operation}
+          onChange={(e) => setOperation(e.target.value)}
+          style={{
+            display: 'block',
+            width: '100%',
+            padding: '0.6rem',
+            marginTop: '0.5rem',
+            borderRadius: '10px',
+            border: '1px solid #ccc',
+            fontSize: '1rem'
+          }}
+        >
+          <option value="add">➕ Add</option>
+          <option value="subtract">➖ Subtract</option>
+          <option value="multiply">✖ Multiply</option>
+          <option value="divide">➗ Divide</option>
+          <option value="average"> Average</option>
+        </select>
+      </div>
+
       <button
         onClick={calculate}
         disabled={!hasValidInput}
@@ -128,21 +179,22 @@ function ValueCalculator() {
           transition: 'background-color 0.3s ease'
         }}
       >
-        ✅ Calculate
+        Calculate
       </button>
 
-      <div style={{
-        marginTop: '2rem',
-        padding: '1rem',
-        backgroundColor: '#fff',
-        borderRadius: '12px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        lineHeight: '1.6'
-      }}>
-        <p><strong>Total:</strong> {result.sum.toExponential(3)} <span style={{ color: '#888' }}>({result.sum.toLocaleString()})</span></p>
-        <p><strong>Average:</strong> {result.avg.toExponential(3)} <span style={{ color: '#888' }}>({result.avg.toLocaleString()})</span></p>
-        <p><strong>Values Count:</strong> {values.filter(v => v.trim() !== '').length}</p>
-      </div>
+      {result && typeof result === 'object' && (
+        <div style={{
+          marginTop: '2rem',
+          padding: '1rem',
+          backgroundColor: '#fff',
+          borderRadius: '12px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+          lineHeight: '1.6'
+        }}>
+          <p><strong>Result:</strong> {result.scientific} <span style={{ color: '#888' }}>({result.formatted})</span></p>
+          <p><strong>Values Count:</strong> {result.count}</p>
+        </div>
+      )}
     </div>
   );
 }
