@@ -1,26 +1,65 @@
-// src/Home.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 function Home() {
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Welcome to Time & Value Calculator</h1>
-      <p>This simple app helps you quickly calculate time differences and custom value-based calculations.</p>
-      <div style={{ marginTop: '2rem' }}>
-        <Link to="/time" style={linkStyle}>→ Time Calculator</Link><br />
-        <Link to="/value" style={linkStyle}>→ Value Calculator</Link>
+    <div style={{
+      padding: '3rem 1rem',
+      maxWidth: '700px',
+      margin: '0 auto',
+      fontFamily: 'Inter, Arial, sans-serif',
+      color: '#333'
+    }}>
+      <h1 style={{
+        fontSize: '2.5rem',
+        marginBottom: '1rem',
+        fontWeight: '700',
+        textAlign: 'center'
+      }}>
+        Time & Value Calculator
+      </h1>
+
+      <p style={{
+        fontSize: '1.1rem',
+        textAlign: 'center',
+        color: '#555',
+        maxWidth: '600px',
+        margin: '0 auto 2rem'
+      }}>
+        This simple tool lets you quickly calculate time differences in days and hours, or perform value-based operations like adding, averaging, and using scientific notation.
+      </p>
+
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        gap: '1rem',
+        alignItems: 'center'
+      }}>
+        <Link to="/time" style={buttonStyle}>
+          ⏱️ Time Calculator
+        </Link>
+
+        <Link to="/value" style={buttonStyle}>
+          🔢 Value Calculator
+        </Link>
       </div>
     </div>
   );
 }
 
-const linkStyle = {
+const buttonStyle = {
   display: 'inline-block',
-  margin: '1rem 0',
+  padding: '0.75rem 1.5rem',
+  backgroundColor: '#007bff',
+  color: 'white',
+  fontWeight: '600',
+  borderRadius: '12px',
   textDecoration: 'none',
-  color: '#007bff',
-  fontWeight: 'bold'
+  fontSize: '1.1rem',
+  transition: 'background-color 0.3s ease',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+  width: 'fit-content',
 };
 
 export default Home;

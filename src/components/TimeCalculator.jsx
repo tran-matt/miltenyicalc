@@ -5,9 +5,16 @@ function TimeCalculator() {
   const [endTime, setEndTime] = useState('');
   const [dayDifference, setDayDifference] = useState(0);
   const [result, setResult] = useState('');
+  const [error, setError] = useState('');
 
   const calculateTimeDifference = () => {
-    if (!startTime || !endTime) return;
+    setError('');
+    setResult('');
+
+    if (!startTime || !endTime) {
+      setError('Please enter both start and end times.');
+      return;
+    }
 
     const [startHour, startMinute] = startTime.split(':').map(Number);
     const [endHour, endMinute] = endTime.split(':').map(Number);
@@ -16,6 +23,12 @@ function TimeCalculator() {
     const end = new Date(1970, 0, 1 + Number(dayDifference), endHour, endMinute);
 
     const diffMs = end - start;
+
+    if (diffMs < 0) {
+      setError('End time must be after start time.');
+      return;
+    }
+
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
@@ -23,20 +36,69 @@ function TimeCalculator() {
   };
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <h2>Time Calculator</h2>
-      <label>Start Time (HH:MM):</label><br />
-      <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} /><br />
+    <div style={{
+      maxWidth: '400px',
+      margin: '2rem auto',
+      padding: '2rem',
+      borderRadius: '12px',
+      boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: '#fff'
+    }}>
+      <h2 style={{ textAlign: 'center' }}>⏱️ Time Calculator</h2>
 
-      <label>End Time (HH:MM):</label><br />
-      <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} /><br />
+      <div style={{ marginBottom: '1rem' }}>
+        <label htmlFor="start">Start Time:</label>
+        <input
+          id="start"
+          type="time"
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+          style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+        />
+      </div>
 
-      <label>Days Between Start and End Time:</label><br />
-      <input type="number" min="0" value={dayDifference} onChange={(e) => setDayDifference(e.target.value)} /><br />
+      <div style={{ marginBottom: '1rem' }}>
+        <label htmlFor="end">End Time:</label>
+        <input
+          id="end"
+          type="time"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+          style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+        />
+      </div>
 
-      <button onClick={calculateTimeDifference} style={{ marginTop: '1rem' }}>Calculate</button>
+      <div style={{ marginBottom: '1rem' }}>
+        <label htmlFor="days">Incubation Days Between:</label>
+        <input
+          id="days"
+          type="number"
+          min="0"
+          value={dayDifference}
+          onChange={(e) => setDayDifference(e.target.value)}
+          style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+        />
+      </div>
 
-      {result && <p><strong>Difference:</strong> {result}</p>}
+      <button
+        onClick={calculateTimeDifference}
+        style={{
+          width: '100%',
+          padding: '0.75rem',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          fontWeight: 'bold'
+        }}
+      >
+        Calculate
+      </button>
+
+      {error && <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>}
+      {result && <p style={{ color: 'green', marginTop: '1rem' }}><strong>Difference:</strong> {result}</p>}
     </div>
   );
 }

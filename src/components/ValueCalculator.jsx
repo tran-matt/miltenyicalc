@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 
 function ValueCalculator() {
   const [values, setValues] = useState(['']);
-  const [operation, setOperation] = useState('add');
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState({ sum: 0, avg: 0 });
 
   const handleValueChange = (index, newValue) => {
     const updated = [...values];
@@ -15,97 +14,135 @@ function ValueCalculator() {
     setValues([...values, '']);
   };
 
-  const removeInput = (indexToRemove) => {
-    const updated = values.filter((_, index) => index !== indexToRemove);
-    setValues(updated.length ? updated : ['']); // leave at least one input
+  const removeInput = (index) => {
+    const updated = values.filter((_, i) => i !== index);
+    setValues(updated.length ? updated : ['']);
   };
 
   const calculate = () => {
-    const nums = values.map(v => {
-      const parsed = Number(v);
-      return isNaN(parsed) ? null : parsed;
-    }).filter(n => n !== null);
-
-    let res;
-
-    if (nums.length === 0) {
-      setResult("Enter valid numbers");
-      return;
+    try {
+      const numericValues = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+      const sum = numericValues.reduce((acc, val) => acc + val, 0);
+      const avg = numericValues.length ? sum / numericValues.length : 0;
+      setResult({ sum, avg });
+    } catch {
+      setResult({ sum: 0, avg: 0 });
     }
-
-    switch (operation) {
-      case 'add':
-        res = nums.reduce((a, b) => a + b, 0);
-        break;
-      case 'subtract':
-        res = nums.reduce((a, b) => a - b);
-        break;
-      case 'multiply':
-        res = nums.reduce((a, b) => a * b, 1);
-        break;
-      case 'divide':
-        res = nums.reduce((a, b) => a / b);
-        break;
-      case 'average':
-        res = nums.reduce((a, b) => a + b, 0) / nums.length;
-        break;
-      case 'exponent':
-        res = nums.length === 2 ? Math.pow(nums[0], nums[1]) : 'Needs exactly 2 values for exponentiation';
-        break;
-      default:
-        res = 'Invalid operation';
-    }
-
-    setResult(res.toExponential ? res.toExponential(2) : res);
   };
 
+  const hasValidInput = values.some(v => v.trim() !== '');
+
   return (
-    <div style={{ padding: '1rem' }}>
-      <h2>Value Calculator</h2>
-      <div>
-        {values.map((val, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-            <input
-              type="text"
-              placeholder={`e.g. 5.32E6`}
-              value={val}
-              onChange={(e) => handleValueChange(i, e.target.value)}
-              style={{ width: '200px' }}
-            />
+    <div style={{
+      maxWidth: '600px',
+      margin: '2rem auto',
+      padding: '2rem',
+      borderRadius: '16px',
+      boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+      fontFamily: 'Inter, Arial, sans-serif',
+      backgroundColor: '#f9f9f9',
+      transition: 'all 0.3s ease'
+    }}>
+      <h2 style={{
+        textAlign: 'center',
+        marginBottom: '1.5rem',
+        fontWeight: '600',
+        color: '#333'
+      }}>🔢 Value Calculator</h2>
+
+      {values.map((val, idx) => (
+        <div key={idx} style={{
+          display: 'flex',
+          marginBottom: '0.75rem',
+          alignItems: 'center',
+          transition: 'all 0.3s ease'
+        }}>
+          <input
+            type="text"
+            placeholder="e.g., 2.5e6"
+            title="Supports scientific notation"
+            value={val}
+            onChange={(e) => handleValueChange(idx, e.target.value)}
+            style={{
+              flex: 1,
+              padding: '0.5rem 0.75rem',
+              borderRadius: '8px',
+              border: '1px solid #ccc',
+              fontSize: '1rem',
+              marginRight: '0.5rem',
+              transition: 'border-color 0.2s ease'
+            }}
+          />
+          {values.length > 1 && (
             <button
-              onClick={() => removeInput(i)}
+              onClick={() => removeInput(idx)}
+              aria-label="Remove input"
+              title="Remove this value"
               style={{
-                marginLeft: '8px',
-                padding: '0.3rem 0.6rem',
-                cursor: 'pointer',
-                background: '#f44336',
-                color: 'white',
+                padding: '0.4rem 0.6rem',
+                backgroundColor: '#e74c3c',
+                color: '#fff',
                 border: 'none',
-                borderRadius: '4px'
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
               }}
             >
-              ✕
+              ×
             </button>
-          </div>
-        ))}
-        <button onClick={addInput}>+ Add Another Value</button>
+          )}
+        </div>
+      ))}
+
+      <button
+        onClick={addInput}
+        style={{
+          marginBottom: '1rem',
+          width: '100%',
+          padding: '0.75rem',
+          backgroundColor: '#6c757d',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '10px',
+          cursor: 'pointer',
+          fontSize: '1rem',
+          fontWeight: '500'
+        }}
+      >
+        ➕ Add Value
+      </button>
+
+      <button
+        onClick={calculate}
+        disabled={!hasValidInput}
+        style={{
+          width: '100%',
+          padding: '0.75rem',
+          backgroundColor: hasValidInput ? '#007bff' : '#a0a0a0',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '10px',
+          cursor: hasValidInput ? 'pointer' : 'not-allowed',
+          fontWeight: 'bold',
+          fontSize: '1rem',
+          transition: 'background-color 0.3s ease'
+        }}
+      >
+        ✅ Calculate
+      </button>
+
+      <div style={{
+        marginTop: '2rem',
+        padding: '1rem',
+        backgroundColor: '#fff',
+        borderRadius: '12px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+        lineHeight: '1.6'
+      }}>
+        <p><strong>Total:</strong> {result.sum.toExponential(3)} <span style={{ color: '#888' }}>({result.sum.toLocaleString()})</span></p>
+        <p><strong>Average:</strong> {result.avg.toExponential(3)} <span style={{ color: '#888' }}>({result.avg.toLocaleString()})</span></p>
+        <p><strong>Values Count:</strong> {values.filter(v => v.trim() !== '').length}</p>
       </div>
-
-      <div style={{ marginTop: '1rem' }}>
-        <label>Select Operation:</label><br />
-        <select value={operation} onChange={(e) => setOperation(e.target.value)}>
-          <option value="add">Add</option>
-          <option value="subtract">Subtract</option>
-          <option value="multiply">Multiply</option>
-          <option value="divide">Divide</option>
-          <option value="average">Average</option>
-          <option value="exponent">Exponent (Base ^ Exponent)</option>
-        </select>
-      </div>
-
-      <button onClick={calculate} style={{ marginTop: '1rem' }}>Calculate</button>
-
-      {result !== null && <p><strong>Result:</strong> {result}</p>}
     </div>
   );
 }

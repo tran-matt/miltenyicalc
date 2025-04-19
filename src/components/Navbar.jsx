@@ -1,28 +1,60 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function Navbar() {
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
+
   return (
     <nav style={navStyle}>
-      <Link to="/" style={linkStyle}>Home</Link>
-      <Link to="/time" style={linkStyle}>Time Calculator</Link>
-      <Link to="/value" style={linkStyle}>Value Calculator</Link>
+      <div style={navInner}>
+        <Link to="/" style={{ ...linkStyle, ...(isActive('/') ? activeStyle : {}) }}>
+          Home
+        </Link>
+        <Link to="/time" style={{ ...linkStyle, ...(isActive('/time') ? activeStyle : {}) }}>
+          Time
+        </Link>
+        <Link to="/value" style={{ ...linkStyle, ...(isActive('/value') ? activeStyle : {}) }}>
+          Value
+        </Link>
+      </div>
     </nav>
   );
 }
 
 const navStyle = {
-  padding: '1rem',
-  backgroundColor: '#f5f5f5',
+  backgroundColor: '#ffffff',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+  padding: '0.75rem 1.5rem',
+  position: 'sticky',
+  top: 0,
+  zIndex: 1000
+};
+
+const navInner = {
   display: 'flex',
-  justifyContent: 'space-around',
-  borderBottom: '1px solid #ddd'
+  justifyContent: 'center',
+  gap: '2rem',
+  alignItems: 'center',
+  maxWidth: '900px',
+  margin: '0 auto',
+  fontFamily: 'Inter, Arial, sans-serif'
 };
 
 const linkStyle = {
   textDecoration: 'none',
   color: '#333',
-  fontWeight: '600'
+  fontWeight: '600',
+  fontSize: '1rem',
+  padding: '0.5rem 1rem',
+  borderRadius: '8px',
+  transition: 'background-color 0.2s ease, color 0.2s ease'
+};
+
+const activeStyle = {
+  backgroundColor: '#007bff',
+  color: 'white'
 };
 
 export default Navbar;
