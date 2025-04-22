@@ -3,23 +3,24 @@ import confetti from 'canvas-confetti';
 
 function GamePerfectFill() {
   const [isRunning, setIsRunning] = useState(false);
-  const [time, setTime] = useState(0);
+  const [volume, setVolume] = useState(0);
   const [result, setResult] = useState(null);
   const [highScore, setHighScore] = useState(null);
   const intervalRef = useRef(null);
 
-  const targetTime = 32.3;
-  const maxTime = 32.7;
+  const targetVolume = 32.3;
+  const maxVolume = 32.7;
+  const fullVolume = 50;
 
   const startTimer = () => {
     setIsRunning(true);
     setResult(null);
-    setTime(0);
+    setVolume(0);
 
     intervalRef.current = setInterval(() => {
-      setTime(prev => {
+      setVolume(prev => {
         const next = +(prev + 0.01).toFixed(2);
-        if (next >= 60) {
+        if (next >= fullVolume) {
           stopTimer(next);
         }
         return next;
@@ -27,58 +28,58 @@ function GamePerfectFill() {
     }, 10);
   };
 
-  const stopTimer = (stoppedAtInput = time) => {
-    const stoppedAt = typeof stoppedAtInput === 'number' ? stoppedAtInput : time;
+  const stopTimer = (stoppedAtInput = volume) => {
+    const stoppedAt = typeof stoppedAtInput === 'number' ? stoppedAtInput : volume;
     clearInterval(intervalRef.current);
     setIsRunning(false);
-  
+
     const rounded = +stoppedAt.toFixed(2);
-  
-    if (rounded >= targetTime && rounded <= maxTime) {
-      setResult(`✅ Success! You stopped at ${rounded.toFixed(2)}s`);
+
+    if (rounded >= targetVolume && rounded <= maxVolume) {
+      setResult(`✅ Success! You stopped at ${rounded.toFixed(2)}L`);
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 }
       });
-    } else if (rounded < targetTime) {
-      const diff = (targetTime - rounded).toFixed(2);
-      setResult(`🟡 Too early by ${diff}s`);
+    } else if (rounded < targetVolume) {
+      const diff = (targetVolume - rounded).toFixed(2);
+      setResult(`🟡 Too early by ${diff}L`);
     } else {
-      const diff = (rounded - maxTime).toFixed(2);
-      setResult(`❌ Overfilled! You went past 32.7s by ${diff}s`);
+      const diff = (rounded - maxVolume).toFixed(2);
+      setResult(`❌ Overfilled! You went past 32.7L by ${diff}L`);
     }
-  
+
     const deviation = Math.min(
-      Math.abs(stoppedAt - targetTime),
-      Math.abs(stoppedAt - maxTime)
+      Math.abs(stoppedAt - targetVolume),
+      Math.abs(stoppedAt - maxVolume)
     );
-  
-    if (stoppedAt <= maxTime) {
+
+    if (stoppedAt <= maxVolume) {
       if (highScore === null || deviation < highScore.deviation) {
         setHighScore({ value: stoppedAt, deviation });
       }
     }
   };
-  
+
   const resetGame = () => {
     setIsRunning(false);
-    setTime(0);
+    setVolume(0);
     setResult(null);
     clearInterval(intervalRef.current);
   };
 
-  const fillPercentage = Math.min((time / maxTime) * 100, 100);
-  const fillColor = time <= targetTime
+  const fillPercentage = Math.min((volume / fullVolume) * 100, 100);
+  const fillColor = volume <= targetVolume
     ? '#007bff'
-    : time <= maxTime
+    : volume <= maxVolume
       ? '#ffc107'
       : '#dc3545';
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.heading}>🎮 Bioreactor Fill Game</h2>
-      <p style={styles.subtext}>Try to stop the fill between <strong>32.3L</strong> and <strong>32.7L</strong>. Overshooting means media waste. Undershooting means incomplete fill!</p>
+      <h2 style={styles.heading}>🧪 Bioreactor Fill Game</h2>
+      <p style={styles.subtext}>Try to stop the fill between <strong>32.3L</strong> and <strong>32.7L</strong>. Overshooting means deviation! Undershooting means incomplete fill!</p>
 
       <div style={styles.gameWrap}>
         <div style={styles.bioreactor}>
@@ -88,14 +89,14 @@ function GamePerfectFill() {
             backgroundColor: fillColor
           }} />
         </div>
-        <div style={styles.timerDisplay}>{time.toFixed(2)}s</div>
+        <div style={styles.timerDisplay}>{volume.toFixed(2)}L</div>
       </div>
 
       <div style={styles.buttonRow}>
         {!isRunning ? (
           <button onClick={startTimer} style={styles.buttonPrimary}>▶️ Start</button>
         ) : (
-          <button onClick={stopTimer} style={styles.buttonStop}>⏹️ Stop</button>
+          <button onClick={() => stopTimer()} style={styles.buttonStop}>⏹️ Stop</button>
         )}
         <button onClick={resetGame} style={styles.buttonSecondary}>🔄 Reset</button>
       </div>
@@ -103,7 +104,7 @@ function GamePerfectFill() {
       {result && <p style={styles.resultText}>{result}</p>}
       {highScore && (
         <p style={{ ...styles.resultText, color: '#28a745' }}>
-          🏆 Best so far: {highScore.value.toFixed(2)}s (±{highScore.deviation.toFixed(2)}s)
+          🏆 Best so far: {highScore.value.toFixed(2)}L (±{highScore.deviation.toFixed(2)}L)
         </p>
       )}
     </div>
