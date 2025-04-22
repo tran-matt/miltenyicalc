@@ -43,6 +43,9 @@ function Home() {
         <Link to="/value" style={buttonStyle}>
           🔢 Value Calculator
         </Link>
+
+        <Link to="/game" style={buttonStyle}>🎮 Fill Timing Game</Link>
+
       </div>
     </div>
   );
