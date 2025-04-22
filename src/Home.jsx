@@ -26,7 +26,7 @@ function Home() {
         maxWidth: '600px',
         margin: '0 auto 2rem'
       }}>
-        This simple tool lets you quickly calculate time differences in days and hours, or perform value-based operations like adding, averaging, and using scientific notation.
+        This simple tool lets you quickly calculate time differences in days and hours, perform value-based operations like adding or averaging with scientific notation, and simulate timing precision for upstream bioprocessing.
       </p>
 
       <div style={{
@@ -44,7 +44,13 @@ function Home() {
           🔢 Value Calculator
         </Link>
 
-        <Link to="/game" style={buttonStyle}>🎮 Fill Timing Game</Link>
+        <Link to="/doubling-time" style={buttonStyle}>
+          📈 Doubling Time Calculator
+        </Link>
+
+        <Link to="/game" style={buttonStyle}>
+          🎮 Fill Timing Game
+        </Link>
 
       </div>
     </div>

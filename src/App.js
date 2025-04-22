@@ -6,6 +6,7 @@ import ValueCalculator from './components/ValueCalculator';
 import Navbar from './components/Navbar';
 import Home from './Home';
 import GamePerfectFill from './components/GamePerfectFill';
+import DoublingTimeCalculator from './components/DoublingTimeCalculator'; 
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/time" element={<TimeCalculator />} />
         <Route path="/value" element={<ValueCalculator />} />
         <Route path="/game" element={<GamePerfectFill />} />
+        <Route path="/doubling-time" element={<DoublingTimeCalculator />} /> 
       </Routes>
     </Router>
   );

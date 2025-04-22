@@ -18,6 +18,13 @@ function Navbar() {
         <Link to="/value" style={{ ...linkStyle, ...(isActive('/value') ? activeStyle : {}) }}>
           Value
         </Link>
+        <Link to="/doubling-time" style={{ ...linkStyle, ...(isActive('/doubling-time') ? activeStyle : {}) }}>
+          Doubling Time
+        </Link>
+        <Link to="/game" style={{ ...linkStyle, ...(isActive('/game') ? activeStyle : {}) }}>
+          Fill Game
+        </Link>
+  
       </div>
     </nav>
   );
